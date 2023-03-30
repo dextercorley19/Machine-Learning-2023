@@ -13,20 +13,30 @@ from timple.timedelta import strftimedelta
 
 ff1.Cache.enable_cache('cache')
 
-Bahrain_qualification = ff1.get_session(2023, 'Bahrain', 'Q')
-print(Bahrain_qualification.date)
+Bahrain_q = ff1.get_session(2022, 'Bahrain', 'R')
+Bahrain_q.load(telemetry=False)
+weather_data = Bahrain_q.laps.get_weather_data()
+print(weather_data)
 
-Bahrain_qualification.load();
-Bahrain_qualification.results[:3]
+laps =Bahrain_q.laps
+laps = laps.reset_index(drop=True)
+weather_data = weather_data.reset_index(drop=True)
 
-Bahrain_race = ff1.get_session(2023, 'Bahrain', 'R')
+#exclude time column from weather data when joining
+joined = pd.concat([laps, weather_data.loc[:, ~(weather_data.columns == 'Time')]], axis=1)
+print(joined)
+joined.to_csv('bahrain2022_r.csv')
+#Bahrain_qualification.load();
+#Bahrain_qualification.results[:3]
 
-Bahrain_race.load();
-laps_r = Bahrain_race.laps
-laps_r
-laps_r.columns
+#Bahrain_race = ff1.get_session(2023, 'Bahrain', 'R')
 
-fastest_lap = laps_r.pick_fastest()
-fastest_lap['Driver']
+#Bahrain_race.load();
+#laps_r = Bahrain_race.laps
+#laps_r
+#laps_r.columns
+
+#fastest_lap = laps_r.pick_fastest()
+#fastest_lap['Driver']
 
 
